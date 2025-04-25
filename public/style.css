@@ -1,0 +1,22 @@
+body {
+    font-family: sans-serif;
+    padding: 1rem;
+  }
+  #conversation {
+    height: 300px;
+    overflow-y: scroll;
+    border: 1px solid gray;
+    padding: 0.5rem;
+  }
+  input {
+    width: 70%;
+    padding: 0.5rem;
+  }
+  button {
+    padding: 0.5rem 1rem;
+  }
+  footer {
+    margin-top: 2rem;
+    font-size: 0.8rem;
+    color: #888;
+  }

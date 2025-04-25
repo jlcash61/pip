@@ -5,30 +5,7 @@
   <!-- ─────────────────────────────────────────────────────────────
        🧠 PIP Playground – Basic Frontend
        ───────────────────────────────────────────────────────────── -->
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 1rem;
-    }
-    #conversation {
-      height: 300px;
-      overflow-y: scroll;
-      border: 1px solid gray;
-      padding: 0.5rem;
-    }
-    input {
-      width: 70%;
-      padding: 0.5rem;
-    }
-    button {
-      padding: 0.5rem 1rem;
-    }
-    footer {
-      margin-top: 2rem;
-      font-size: 0.8rem;
-      color: #888;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <!-- ─────────────────────────────────────────────────────────────
@@ -37,50 +14,15 @@
   <h2>PIP Playground</h2>
   <div id="conversation"></div>
   <input id="userInput" placeholder="Type here..." />
-  <button onclick="send()">Send</button>
+  <button id="sendButton">Send</button>
 
   <!-- ─────────────────────────────────────────────────────────────
        ⚙️ Client-Side Logic
        ───────────────────────────────────────────────────────────── -->
-  <script>
-    // ─── Escape HTML for Safe Output ───────────────────────────
-    function escapeHTML(str) {
-      return str.replace(/[&<>'"]/g, tag => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-      }[tag]));
-    }
+       <script type="module" src="util.js"></script>
+       <script type="module" src="main.js"></script>
+       
 
-    // ─── Handle Send Action ────────────────────────────────────
-    async function send() {
-      const input = document.getElementById("userInput");
-      const convo = document.getElementById("conversation");
-      const btn = document.querySelector("button");
-
-      const msg = input.value.trim();
-      if (!msg) return;
-
-      input.value = "";
-      btn.disabled = true;
-
-      convo.innerHTML += `<p><b>You:</b> ${escapeHTML(msg)}</p>`;
-
-      try {
-        const res = await fetch("https://us-central1-pip-ai.cloudfunctions.net/sendMessage", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: msg })
-        });
-
-        const data = await res.json();
-        convo.innerHTML += `<p><b>PiP:</b> ${escapeHTML(data.reply)}</p>`;
-      } catch (err) {
-        convo.innerHTML += `<p style="color:red;"><b>Error:</b> ${err.message}</p>`;
-      }
-
-      convo.scrollTop = convo.scrollHeight;
-      btn.disabled = false;
-    }
-  </script>
 
   <!-- ─────────────────────────────────────────────────────────────
        🏁 Footer
