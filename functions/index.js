@@ -1,14 +1,18 @@
-// PiP Assistant v1.0 – Initial Thread API Integration
-// PiP Assistant v1.0
-// 🌟 Stable thread-only playground
-// ✅ Uses Assistant ID API with v2 header
-// ✅ CORS enabled, minimal user context
+// PiP Assistant v1.1 – Firestore Thread Save
+// 🌟 Thread API with Firestore persistence
+// ✅ Saves threadId + createdAt
+// ✅ Uses Assistant ID API (v2)
+// ✅ CORS enabled
 
 // ─────────────────────────────────────────────────────────────
 // 🔧 Imports & Configuration
 // ─────────────────────────────────────────────────────────────
 const functions = require("firebase-functions");
+const admin = require("firebase-admin");
 const axios = require("axios");
+
+admin.initializeApp();
+const db = admin.firestore();
 
 const OPENAI_API_KEY = functions.config().openai.key;
 const ASSISTANT_ID = functions.config().openai.assistant;
@@ -16,7 +20,7 @@ let threadId = null;
 
 const openAIHeaders = {
   Authorization: `Bearer ${OPENAI_API_KEY}`,
-  "OpenAI-Beta": "assistants=v2"
+  "OpenAI-Beta": "assistants=v2",
 };
 
 // ─────────────────────────────────────────────────────────────
@@ -33,21 +37,34 @@ exports.sendMessage = functions.https.onRequest(async (req, res) => {
   }
 
   try {
-    // ─── Validate Request ─────────────────────────────────────
     if (req.method !== "POST") return res.status(405).send("Method Not Allowed");
 
-    const userText = req.body.message;
+    const { message: userText, threadId: incomingThreadId, userId = 'demo' } = req.body;
     if (!userText) return res.status(400).send("Missing user message.");
 
-    // ─── Create Thread if Not Exists ──────────────────────────
-    if (!threadId) {
+    // ─── Determine Thread ────────────────────────────────────
+    if (incomingThreadId) {
+      threadId = incomingThreadId;
+      console.log("📥 Using provided thread:", threadId);
+    } else if (!threadId) {
       const newThread = await axios.post(
         "https://api.openai.com/v1/threads",
         {},
         { headers: openAIHeaders }
       );
       threadId = newThread.data.id;
-      console.log("🧵 Thread created:", threadId);
+      console.log("🧵 Created new thread:", threadId);
+
+      // 🔥 Save under users/{userId}/threads/{threadId}
+      await db
+        .collection('users')
+        .doc(userId)
+        .collection('threads')
+        .doc(threadId)
+        .set({
+          threadId,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
     }
 
     // ─── Post User Message ────────────────────────────────────
@@ -82,15 +99,15 @@ exports.sendMessage = functions.https.onRequest(async (req, res) => {
     );
 
     const reply =
-      msgResp?.data?.data?.[0]?.content?.[0]?.text?.value || "No reply returned.";
-    
+      msgResp?.data?.data?.[0]?.content?.[0]?.text?.value || "No reply.";
+
     return res.status(200).json({ reply });
 
   } catch (err) {
-    console.error("🔥 sendMessage error:", err?.response?.data || err.message || err);
+    console.error("🔥 Error in sendMessage:", err?.response?.data || err.message || err);
     return res.status(500).json({
       error: "Internal Server Error",
-      details: err.message || "Unknown"
+      details: err.message || "Unknown error",
     });
   }
 });
