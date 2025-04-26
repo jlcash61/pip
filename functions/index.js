@@ -111,3 +111,34 @@ exports.sendMessage = functions.https.onRequest(async (req, res) => {
     });
   }
 });
+
+exports.getThreadMessages = functions.https.onRequest(async (req, res) => {
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  if (req.method === "OPTIONS") {
+    return res.status(204).send("");
+  }
+
+  try {
+    const { threadId } = req.body;
+    if (!threadId) return res.status(400).send("Missing threadId.");
+
+    const response = await axios.get(`https://api.openai.com/v1/threads/${threadId}/messages`, {
+      headers: {
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        "OpenAI-Beta": "assistants=v2"
+      }
+    });
+
+    return res.status(200).json(response.data);
+
+  } catch (err) {
+    console.error("🔥 Error in getThreadMessages:", err?.response?.data || err.message || err);
+    return res.status(500).json({
+      error: "Internal Server Error",
+      details: err.message || "Unknown error",
+    });
+  }
+});
