@@ -16,6 +16,20 @@ All notable changes to this project will be documented here.
 
 ---
 
+## [1.2] – 2025-04-26
+### Added
+- Google authentication (login/logout) via Firebase.
+- Per-user thread lists tied to authenticated user ID.
+- Highlighting of currently active thread in thread list.
+- Fix race condition by deferring thread load until after auth detection.
+
+### Notes
+- "New Thread" button still pending.
+- Firestore security rules pending (future 1.2.x or 1.3).
+
+
+---
+
 ## [1.1] – 2025-04-26
 ### Added
 - Firestore integration for saving thread IDs under user profiles.

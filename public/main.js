@@ -21,11 +21,22 @@ document.addEventListener('DOMContentLoaded', () => {
     sendButton.addEventListener('click', send);
   }
 
+  const newThreadBtn = document.getElementById('newThreadBtn');
+if (newThreadBtn) {
+  newThreadBtn.addEventListener('click', startNewThread);
+}
+
+
   // 🛠 Moved loadThreads to only happen after auth ready
 });
 
 // ─── Monitor Auth State ─────────────────────────────────────
 onAuthStateChanged(auth, (user) => {
+  // Clear active thread and conversation when auth state changes
+  activeThreadId = null;
+  const convo = document.getElementById("conversation");
+  if (convo) convo.innerHTML = "";
+
   if (user) {
     currentUserUid = user.uid;
     console.log("👤 Logged in as:", user.displayName);
@@ -89,6 +100,18 @@ function highlightActiveThread(selectedThreadId) {
   });
 }
 
+function startNewThread() {
+  console.log("➕ New Thread Button Clicked");
+  activeThreadId = null;
+
+  const convo = document.getElementById("conversation");
+  if (convo) convo.innerHTML = "";
+
+  // Optional: Scroll conversation to top
+  convo.scrollTop = 0;
+}
+
+
 async function loadConversation(threadId) {
   const convo = document.getElementById("conversation");
   convo.innerHTML = ""; // Clear current convo
@@ -128,6 +151,8 @@ async function send() {
   const input = document.getElementById("userInput");
   const convo = document.getElementById("conversation");
   const btn = document.querySelector("button");
+  const wasNewThread = !activeThreadId; // 🆕 was there no active thread before send?
+
 
   const msg = input.value.trim();
   if (!msg) return;
@@ -139,14 +164,17 @@ async function send() {
 
   try {
     const payload = { message: msg };
-if (activeThreadId) {
-  payload.threadId = activeThreadId;
-}
-if (currentUserUid) {
-  payload.userId = currentUserUid; // 🆕 Add userId if logged in
-}
+    if (activeThreadId) {
+      payload.threadId = activeThreadId;
+    }
+    if (currentUserUid) {
+      payload.userId = currentUserUid; // 🆕 Add userId if logged in
+    }
 
-console.log("📤 Sending message. currentUserUid = ", currentUserUid);
+    console.log("📤 Preparing to send message:");
+    console.log("- currentUserUid:", currentUserUid);
+    console.log("- activeThreadId:", activeThreadId);
+
 
 
     const res = await fetch("https://us-central1-pip-ai.cloudfunctions.net/sendMessage", {
@@ -154,6 +182,12 @@ console.log("📤 Sending message. currentUserUid = ", currentUserUid);
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
+
+    if (wasNewThread) {
+      // Refresh thread list to show newly created thread
+      loadThreads(currentUserUid || DEFAULT_USER_ID);
+    }
+    
 
     const data = await res.json();
     convo.innerHTML += `<p><b>PiP:</b> ${escapeHTML(data.reply)}</p>`;

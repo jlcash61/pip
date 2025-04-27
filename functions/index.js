@@ -1,4 +1,4 @@
-// PiP Assistant v1.1 – Firestore Thread Save
+// PiP Assistant v1.2 – Firestore Thread Save
 // 🌟 Thread API with Firestore persistence
 // ✅ Saves threadId + createdAt
 // ✅ Uses Assistant ID API (v2)
@@ -16,7 +16,6 @@ const db = admin.firestore();
 
 const OPENAI_API_KEY = functions.config().openai.key;
 const ASSISTANT_ID = functions.config().openai.assistant;
-let threadId = null;
 
 const openAIHeaders = {
   Authorization: `Bearer ${OPENAI_API_KEY}`,
@@ -27,6 +26,8 @@ const openAIHeaders = {
 // 🚀 sendMessage Cloud Function
 // ─────────────────────────────────────────────────────────────
 exports.sendMessage = functions.https.onRequest(async (req, res) => {
+  let threadId = null;
+
   // ─── CORS Headers ──────────────────────────────────────────
   res.set("Access-Control-Allow-Origin", "*");
   res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
