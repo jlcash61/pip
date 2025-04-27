@@ -1,62 +1,45 @@
-
 ---
 
-## 📜 Updated CHANGELOG.md
-
-You definitely want to add a new **[1.1]** block to document your changes.
-
----
-
-**UPDATED CHANGELOG.md draft:**
+# 📜 Final **CHANGELOG.md**
 
 ```markdown
-# 📜 PiP Assistant Changelog
+# Changelog
 
-All notable changes to this project will be documented here.
-
----
-
-## [1.2] – 2025-04-26
-### Added
-- Google authentication (login/logout) via Firebase.
-- Per-user thread lists tied to authenticated user ID.
-- Highlighting of currently active thread in thread list.
-- Fix race condition by deferring thread load until after auth detection.
-
-### Notes
-- "New Thread" button still pending.
-- Firestore security rules pending (future 1.2.x or 1.3).
-
+All notable changes to this project are documented here.
 
 ---
 
-## [1.1] – 2025-04-26
+## [1.2.10] – 2025-04-27
 ### Added
-- Firestore integration for saving thread IDs under user profiles.
-- Frontend thread listing with live clickable threads.
-- Frontend auto-load of previous conversation history.
-- Secure backend fetching of conversation messages (no API key exposure).
+- Dynamic profile display (user picture and name after login)
+- Hide/show Login and Logout buttons dynamically based on auth state
+- Centered header title with responsive flex layout
+- Full screen height layout with pinned footer
+- Conversation bubbles staggered left/right with proper margins on speaker change
 
 ### Changed
-- Backend expanded to include `getThreadMessages` function.
-- Frontend updated to use Firestore reads and Cloud Function fetching.
+- Smoothed out conversation loading and auto-scroll
+- Tightened frontend CSS for bubble spacing consistency
+- Cleaned DOM event attachment for login, logout, new thread, and send
 
 ### Notes
-- Threads now persist independently in Firestore.
-- Still no long-term memory or PXE soul yet.
+- Login is optional; "Demo Mode" fully functional.
+- Backend architecture (Cloud Functions) complete for Assistant ID handling.
+- This marks the final stable version of the 1.2 series — ready for future 1.3 features like settings menu, dark mode, or TTS integrations.
 
 ---
 
-## [1.0] – 2025-04-24
+## [1.2.0] – 2025-04-25
 ### Added
-- Initial backend function to create and manage a persistent OpenAI Assistant thread.
-- Basic frontend with vanilla HTML, modular JavaScript, and style separation.
-- Secure OpenAI key + assistant ID storage via Firebase functions config.
-- Basic conversation logging to the browser without backend database storage.
+- Core Firestore-based thread management
+- OpenAI Assistant ID v2 conversation integration
+- Create/Select/Delete threads functionality
+- Basic frontend layout with conversation panel
+- Backend Cloud Functions for `sendMessage` and `getThreadMessages`
+- Demo mode fallback when no login
 
 ---
 
-## [Future Planned Versions]
-- **v1.2** — Google Auth integration and per-user thread management
-- **v1.3** — System Prompt Injection
-- **v2.0** — Function Calling and Memory Layers
+## [1.1.0] – 2025-04-20
+- Initial stable base version: Firestore and OpenAI API wired together
+- Basic conversation working via Assistant ID API

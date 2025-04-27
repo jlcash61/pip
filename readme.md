@@ -1,92 +1,80 @@
-🧠 PiP Assistant – Version 1.2
-PiP (Pixie Interface Playground) is a lightweight experimental platform designed to explore OpenAI's Assistant API v2.
-It serves as a minimalist, thread-aware chatbot sandbox with Firebase backend and a clean modular frontend.
+# PiP Playground v1.2.10
 
-Now upgraded with Google login, per-user thread management, and smarter frontend loading!
+🚀 **Welcome to PiP Playground** — a streamlined frontend + backend project for interacting with OpenAI's Assistant ID threads and managing conversations in a user-friendly interface.
 
-🚀 Features
-🎯 OpenAI Assistant ID v2 integration
+---
 
-🔑 Google authentication (login/logout)
+## 🌟 Features
 
-🌍 CORS-enabled Firebase Cloud Functions
+- **Thread Management**
+  - Create new threads
+  - Rename existing threads
+  - Delete threads
+  - View all threads dynamically after login
 
-📡 Firestore thread persistence (per user account)
+- **Dynamic UI**
+  - Login with Google
+  - Display user profile picture and name after login
+  - Hide Login button when logged in, show Logout button
+  - Fully functional "Demo" mode when logged out (using fallback "demo" user ID)
 
-🧵 Multi-thread selection and conversation loading
+- **Responsive Layout**
+  - Centered title with flexbox header
+  - Profile information floats right
+  - Threads panel on left, conversation/chat panel on right
+  - Pinned footer at bottom — no scrolling overflow
 
-✨ Active thread highlighting for better navigation
+- **Chat Experience**
+  - Left-aligned assistant bubbles (gray)
+  - Right-aligned user bubbles (blue)
+  - Proper margin spacing on speaker change
+  - Auto-scroll to latest message
+  - Smooth conversation loading
 
-✍️ Secure message-to-reply loop using axios + fetch
+- **Backend Firestore Integration**
+  - Threads are saved under `users/{userId}/threads/{threadId}` in Firestore
+  - CreatedAt timestamp saved on thread creation
+  - Cloud Functions securely handle OpenAI API interactions
 
-🔐 Secrets securely stored via firebase functions:config:set
+---
 
-💬 Modular vanilla HTML/JS frontend (index.html, main.js, util.js)
+## 🔧 Project Structure
 
-📦 Project Structure
-cpp
-Copy
-Edit
-/functions 
-   ├── index.js          // Firebase Cloud Functions (sendMessage, getThreadMessages)
-/public 
-   ├── index.html        // Chat UI 
-   ├── style.css         // UI Styling 
-   ├── main.js           // Frontend logic 
-   └── util.js           // HTML escaping utility
+/public ├── index.html ├── style.css ├── main.js ├── firebaseInit.js ├── firebaseAuth.js └── util.js /functions ├── index.js (Cloud Functions backend: sendMessage, getThreadMessages)
 
-README.md   // This file 
-CHANGELOG.md // Version tracking
-🧪 Quickstart
-Clone + Install:
 
-bash
-Copy
-Edit
-git clone https://github.com/your-username/pip-assistant.git
-cd pip-assistant/functions
-npm install
-Set Firebase Config:
+---
 
-bash
-Copy
-Edit
-firebase functions:config:set openai.key="sk-..." openai.assistant="asst_..."
-Deploy to Firebase:
+## 🚀 Getting Started
 
-bash
-Copy
-Edit
-firebase deploy --only functions
-Use the UI:
+1. Deploy `/public` to Firebase Hosting.
+2. Deploy `/functions` as Firebase Cloud Functions.
+3. Set your Firebase environment variables:
+   ```bash
+   firebase functions:config:set openai.key="YOUR_OPENAI_API_KEY" openai.assistant="YOUR_ASSISTANT_ID"
+Done! Log in with Google and start chatting.
 
-Open /public/index.html in your browser.
+🛡️ Notes
+Logging out immediately clears the conversation window and returns to demo threads.
 
-Login with Google to manage your personal threads.
+All interactions secured through backend Cloud Functions — no client-side OpenAI API keys exposed.
 
-✏️ Version History
+If no login, system operates in "Demo Mode" using a shared thread list.
 
-Version	Date	Summary
-1.2	2025-04-26	Google login, per-user threads, active thread highlight, race condition fix
-1.1	2025-04-26	Firestore thread management, multi-thread UI
-1.0	2025-04-24	Initial stable thread-only release
-⚠️ Notes
-Assistant has no long-term memory, no soul seed, no PXE integration (by design).
+🛠️ Built with
+OpenAI Assistants v2 API
 
-Login is optional — "Demo" fallback mode works if no authentication.
+Firebase Hosting
 
-Built primarily for experimentation, testing, and learning OpenAI Assistant behavior.
+Firebase Authentication
 
-🛠️ Future Ideas
-"New Thread" creation button
+Firebase Firestore
 
-Thread deletion and renaming
+Firebase Functions (Node.js)
 
-System prompt injection at thread start
+Vanilla JavaScript, HTML, and CSS
 
-Voice TTS/STT support
+👤 Author
+Created by Jeff Cash under the BorgworX brand 🚀
+(Version 1.2.10 — Golden Master)
 
-Real-time Firestore syncing (onSnapshot)
-
-💡 Built with love for clarity, curiosity, and code.
-— Pixie + TiBorg 🚀

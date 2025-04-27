@@ -1,26 +1,56 @@
-body {
-  font-family: sans-serif;
+/* ─── Layout Containers ─────────────────────────────── */
+
+html, body {
+  height: 100%;
   margin: 0;
-  padding: 0;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-}
-
-#title {
-  text-align: center;
-  margin: 1rem 0;
 }
 
 #mainContent {
-  display: flex;
   flex-grow: 1;
-  height: calc(100vh - 150px); /* subtracts title + footer height */
+  display: flex;
+  overflow: hidden;
+  height: auto;
+}
+
+#header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 1rem;
 }
 
+#title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  margin: 0;
+}
+
+
+#profileInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+#profilePic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+
+/* ─── Thread Panel ───────────────────────────────────── */
+
 #threadPanel {
-  width: 300px;
+  min-width: 300px;
+  max-width: 300px;
   border-right: 1px solid gray;
   padding: 1rem;
   overflow-y: auto;
@@ -28,25 +58,65 @@ body {
   flex-direction: column;
 }
 
-#threadList {
-  flex-grow: 1;
+#threadPanel h3 {
+  text-align: center;
   margin-bottom: 1rem;
 }
+
+
+#threadList > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #ccc;
+  padding: 5px;
+  margin: 5px 0;
+  cursor: pointer;
+  min-height: 40px;
+  transition: background-color 0.2s;
+}
+
+#threadList > div:hover {
+  background-color: #f0f0f0; /* 🆕 Soft hover highlight */
+}
+
+#threadList span {
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ─── Chat Panel ─────────────────────────────────────── */
 
 #chatPanel {
   flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0;
   padding: 1rem;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
-#conversation {
+#conversation, #conversation p {
   flex-grow: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-bottom: 1rem;
   border: 1px solid gray;
   padding: 0.5rem;
-  overflow-y: scroll;
-  margin-bottom: 1rem;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 }
+
+#conversation p {
+  max-width: 100%;
+  margin-bottom: 0.5rem; /* 🆕 Space between messages */
+}
+
+/* ─── Input Area ─────────────────────────────────────── */
 
 #inputArea {
   display: flex;
@@ -58,9 +128,14 @@ input {
   padding: 0.5rem;
 }
 
+/* ─── Buttons ─────────────────────────────────────────── */
+
 button {
   padding: 0.5rem 1rem;
+  cursor: pointer;
 }
+
+/* ─── Footer ──────────────────────────────────────────── */
 
 footer {
   text-align: center;
@@ -68,3 +143,28 @@ footer {
   color: #888;
   padding: 1rem;
 }
+
+.userMessage, .assistantMessage {
+  max-width: 60%;
+  padding: 10px;
+  border-radius: 10px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  display: inline-block;
+}
+
+.userMessage {
+  background-color: #cce5ff;
+  margin-left: auto;
+  margin-right: 20px;
+  text-align: right;
+}
+
+.assistantMessage {
+  background-color: #e0e0e0;
+  margin-right: auto;
+  margin-left: 20px;
+  text-align: left;
+}
+
+

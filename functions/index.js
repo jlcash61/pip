@@ -1,4 +1,4 @@
-// PiP Assistant v1.2 – Firestore Thread Save
+// PiP Assistant v1.2.10 – Firestore Thread Save
 // 🌟 Thread API with Firestore persistence
 // ✅ Saves threadId + createdAt
 // ✅ Uses Assistant ID API (v2)
