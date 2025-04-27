@@ -1,80 +1,80 @@
-# PiP Playground v1.2.10
+PiP Playground – v1.3.0-dev
+Welcome to PiP Playground, your testbed for assistant-powered conversations powered by OpenAI's Assistant ID API and Firestore integration.
 
-🚀 **Welcome to PiP Playground** — a streamlined frontend + backend project for interacting with OpenAI's Assistant ID threads and managing conversations in a user-friendly interface.
+🌟 What's New in v1.3.0
+🔵 System Prompt Injection — New threads automatically inject a system message from Firestore (/systemPrompts/default).
 
----
+🔵 Firestore Dynamic Prompts — System prompts are now editable and manageable via Firestore.
 
-## 🌟 Features
+🔵 Hardened Backend — Safer thread creation flow with robust error handling.
 
-- **Thread Management**
-  - Create new threads
-  - Rename existing threads
-  - Delete threads
-  - View all threads dynamically after login
+🔵 Future-Ready — Structure prepared for upcoming Settings menu (gear icon) to allow selectable system prompts.
 
-- **Dynamic UI**
-  - Login with Google
-  - Display user profile picture and name after login
-  - Hide Login button when logged in, show Logout button
-  - Fully functional "Demo" mode when logged out (using fallback "demo" user ID)
+✅ Smooth performance, no frontend changes needed for this upgrade.
 
-- **Responsive Layout**
-  - Centered title with flexbox header
-  - Profile information floats right
-  - Threads panel on left, conversation/chat panel on right
-  - Pinned footer at bottom — no scrolling overflow
+🛠 Architecture Overview
+Frontend
+index.html — Main page structure
 
-- **Chat Experience**
-  - Left-aligned assistant bubbles (gray)
-  - Right-aligned user bubbles (blue)
-  - Proper margin spacing on speaker change
-  - Auto-scroll to latest message
-  - Smooth conversation loading
+style.css — Layout and visual polish
 
-- **Backend Firestore Integration**
-  - Threads are saved under `users/{userId}/threads/{threadId}` in Firestore
-  - CreatedAt timestamp saved on thread creation
-  - Cloud Functions securely handle OpenAI API interactions
+main.js — Authentication, thread management, conversation flow
 
----
+util.js — Escape HTML safely
 
-## 🔧 Project Structure
+Backend
+index.js —
 
-/public ├── index.html ├── style.css ├── main.js ├── firebaseInit.js ├── firebaseAuth.js └── util.js /functions ├── index.js (Cloud Functions backend: sendMessage, getThreadMessages)
+sendMessage Cloud Function: creates or continues threads, injects system prompt on new threads, posts user messages, polls and returns assistant reply.
+
+getThreadMessages Cloud Function: retrieves thread conversation history.
+
+Firebase
+Authentication — Google OAuth2 (sign-in/out)
+
+Firestore —
+
+/users/{uid}/threads/{threadId} — Thread metadata
+
+/systemPrompts/{promptId} — System prompts for injection
+
+🚀 Getting Started
+1. Deploy Cloud Functions
+Deploy index.js using Firebase CLI:
+
+bash
+Copy
+Edit
+firebase deploy --only functions
+2. Set Up Firestore
+Manually create a collection:
 
 
----
+Collection	Document ID	Field	Type	Value
+systemPrompts	default	content	string	"You are PiP, a friendly assistant created by BorgworX. Stay helpful, concise, and a little witty!"
+3. Run Locally or Host
+Open index.html directly in the browser
 
-## 🚀 Getting Started
+Or deploy it to your favorite hosting service (Firebase Hosting recommended)
 
-1. Deploy `/public` to Firebase Hosting.
-2. Deploy `/functions` as Firebase Cloud Functions.
-3. Set your Firebase environment variables:
-   ```bash
-   firebase functions:config:set openai.key="YOUR_OPENAI_API_KEY" openai.assistant="YOUR_ASSISTANT_ID"
-Done! Log in with Google and start chatting.
+🎯 Future Development Roadmap
+🛠 Add Gear Settings Menu (choose system prompts)
 
-🛡️ Notes
-Logging out immediately clears the conversation window and returns to demo threads.
+🛠 Add optional STT (Speech-to-Text) or TTS (Text-to-Speech)
 
-All interactions secured through backend Cloud Functions — no client-side OpenAI API keys exposed.
+🛠 Continue visual and UX polish
 
-If no login, system operates in "Demo Mode" using a shared thread list.
+🛠 Allow multiple predefined prompt modes (Casual Mode, Dev Mode, etc.)
 
-🛠️ Built with
-OpenAI Assistants v2 API
+🧠 Special Thanks
+Developed by Jeff (TiBorg, BorgworX Labs)
+Brought to life with the help of PiP (Project in Progress) 💬✨
 
-Firebase Hosting
+✨ Version
 
-Firebase Authentication
+Version	Status	Release Date
+v1.3.0-dev	In Progress	2025-04-27
+📬 Contact
+For questions, feedback, or collaboration ideas, reach out through your project channels! 🚀
 
-Firebase Firestore
-
-Firebase Functions (Node.js)
-
-Vanilla JavaScript, HTML, and CSS
-
-👤 Author
-Created by Jeff Cash under the BorgworX brand 🚀
-(Version 1.2.10 — Golden Master)
-
+🎯 BorgworX - Smarter Systems for a Smarter Tomorrow

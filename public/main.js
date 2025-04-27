@@ -194,11 +194,15 @@ function startNewThread() {
   activeThreadId = null;
 
   const convo = document.getElementById("conversation");
-  if (convo) convo.innerHTML = "";
+  if (convo) {
+    convo.innerHTML = "<p style='text-align:center; color: gray;'><i>New thread started. Type your message to begin.</i></p>";
+    convo.scrollTop = 0;
+  }
 
-  // Optional: Scroll conversation to top
-  convo.scrollTop = 0;
+  loadThreads(currentUserUid || DEFAULT_USER_ID); // 🆗 Refresh thread list
 }
+
+
 
 
 async function loadConversation(threadId) {
@@ -264,12 +268,12 @@ async function send() {
   input.value = "";
   btn.disabled = true;
 
-  // 🛠 INSERT your own message inside a block (aligned right)
+  // 🧠 User message (aligned right)
   const userBlock = document.createElement('div');
   userBlock.style.display = 'flex';
   userBlock.style.flexDirection = 'column';
   userBlock.style.alignItems = 'flex-end';
-  userBlock.style.marginTop = '30px'; // Always space above user's message
+  userBlock.style.marginTop = '30px';
 
   const userMessageDiv = document.createElement('div');
   userMessageDiv.className = "userMessage";
@@ -278,7 +282,30 @@ async function send() {
   userBlock.appendChild(userMessageDiv);
   convo.appendChild(userBlock);
 
+  // 🧠 Assistant loading bubble (aligned left)
+  const assistantBlock = document.createElement('div');
+  assistantBlock.style.display = 'flex';
+  assistantBlock.style.flexDirection = 'column';
+  assistantBlock.style.alignItems = 'flex-start';
+  assistantBlock.style.marginTop = '30px';
+
+  const loadingDiv = document.createElement('div');
+  loadingDiv.className = "assistantMessage";
+  loadingDiv.innerHTML = `<i>PiP is thinking</i>`; // starting text
+
+  assistantBlock.appendChild(loadingDiv);
+  convo.appendChild(assistantBlock);
+
   convo.scrollTo({ top: convo.scrollHeight, behavior: 'smooth' });
+
+  // 🛠 Animate the dots
+  let dotCount = 0;
+  const maxDots = 3;
+  const thinkingInterval = setInterval(() => {
+    dotCount = (dotCount + 1) % (maxDots + 1); // Cycle 0 → 1 → 2 → 3 → 0
+    let dots = '.'.repeat(dotCount);
+    loadingDiv.innerHTML = `<i>PiP is thinking${dots}</i>`;
+  }, 500); // Update every 0.5 seconds
 
   try {
     const payload = { message: msg };
@@ -305,25 +332,22 @@ async function send() {
 
     const data = await res.json();
 
-    // 🛠 INSERT PiP reply inside a block (aligned left)
-    const assistantBlock = document.createElement('div');
-    assistantBlock.style.display = 'flex';
-    assistantBlock.style.flexDirection = 'column';
-    assistantBlock.style.alignItems = 'flex-start';
-    assistantBlock.style.marginTop = '30px'; // Space above PiP's reply
+    if (wasNewThread && data.threadId) {
+      activeThreadId = data.threadId;
+      console.log(`🧵 New thread captured: ${activeThreadId}`);
+    }
 
-    const assistantMessageDiv = document.createElement('div');
-    assistantMessageDiv.className = "assistantMessage";
-    assistantMessageDiv.innerHTML = `<b>PiP:</b> ${escapeHTML(data.reply)}`;
 
-    assistantBlock.appendChild(assistantMessageDiv);
-    convo.appendChild(assistantBlock);
+    clearInterval(thinkingInterval); // 🛑 Stop the dot animation
+    loadingDiv.innerHTML = `<b>PiP:</b> ${escapeHTML(data.reply)}`;
 
     convo.scrollTo({ top: convo.scrollHeight, behavior: 'smooth' });
 
   } catch (err) {
-    convo.innerHTML += `<p style="color:red;"><b>Error:</b> ${err.message}</p>`;
+    clearInterval(thinkingInterval); // 🛑 Stop animation even on error
+    loadingDiv.innerHTML = `<p style="color:red;"><b>Error:</b> ${err.message}</p>`;
   }
 
   btn.disabled = false;
 }
+

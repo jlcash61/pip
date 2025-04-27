@@ -9,6 +9,29 @@ All notable changes to this project are documented here.
 
 ---
 
+# 📜 CHANGELOG.md
+
+All notable changes to this project are documented here.
+
+---
+
+## [v1.3.0] – In Progress
+### Added
+- System prompt injection when creating a new thread
+- Firestore-based dynamic system prompts
+- Backend hardened to safely inject prompts even if missing
+- Future-ready structure for Settings menu (Gear)
+
+
+## v1.3.0 (In Progress)
+- [Planned] Add system prompt injection when creating a new thread
+- [Planned] Refine Assistant Dashboard instructions
+- [Planned] Explore STT (Speech-to-Text) or TTS (Text-to-Speech) options
+- [Planned] Begin basic Settings Gear menu
+- [Planned] Minor visual polish if needed
+- [Planned] Continuous improvements and code optimizations
+
+
 ## [1.2.10] – 2025-04-27
 ### Added
 - Dynamic profile display (user picture and name after login)
