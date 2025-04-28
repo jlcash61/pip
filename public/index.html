@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>PIP Playground v1.2.10</title>
+  <title>PIP Playground v1.3.3</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -32,12 +32,28 @@
         <button id="logoutBtn">Logout</button>
       </div>
     </div>
+
+    <div id="ttsControls">
+      <label for="ttsEngineSelect">TTS Engine:</label>
+      <select id="ttsEngineSelect">
+        <option value="none">None</option>
+        <option value="openai-tts-1">OpenAI tts-1</option>
+        <option value="openai-tts-1-hd">OpenAI tts-1-hd</option>
+        <option value="google">Google</option>
+      </select>
+    
+      <label for="ttsVoiceSelect">Voice:</label>
+      <select id="ttsVoiceSelect" disabled>
+        <option value="">No Voice Selected</option>
+      </select>
+    </div>
+    
   </div>
 
-  <footer>BorgworX by TiBorg V1.2.10</footer>
+  <footer>BorgworX by TiBorg V1.3.3</footer>
 
   <script type="module" src="util.js"></script>
-  <script type="module" src="main.js?v=1.2.10"></script>
+  <script type="module" src="main.js?v=1.3.3"></script>
 </body>
 
 </html>

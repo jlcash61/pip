@@ -9,10 +9,25 @@ import { doc, updateDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10
 let currentUserUid = null; // 🆕 Track who is logged in
 let activeThreadId = null; // 🆕 Track active thread
 const DEFAULT_USER_ID = 'demo'; // 🆕 fallback uid
+let selectedTTSEngine = "none"; // none, openai-tts-1, openai-tts-1-hd, google
+let selectedTTSVoice = "";      // voice ID for chosen engine
+let availableVoices = [];
+
+
+const goodGoogleVoices = [
+  "en-US-Wavenet-F",
+  "en-US-Wavenet-D",
+  "en-GB-Wavenet-A",
+  "en-GB-Wavenet-D",
+];
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
   const loginBtn = document.getElementById('loginBtn');
   const logoutBtn = document.getElementById('logoutBtn');
+  const ttsEngineSelect = document.getElementById('ttsEngineSelect');
+  const ttsVoiceSelect = document.getElementById('ttsVoiceSelect');
 
   if (loginBtn) loginBtn.addEventListener('click', login);
   if (logoutBtn) logoutBtn.addEventListener('click', logout);
@@ -27,6 +42,43 @@ document.addEventListener('DOMContentLoaded', () => {
     newThreadBtn.addEventListener('click', startNewThread);
   }
 
+  if (typeof speechSynthesis !== "undefined") {
+    speechSynthesis.onvoiceschanged = () => {
+      availableVoices = speechSynthesis.getVoices(); // Save them all
+      console.log(`🎤 Voices loaded: ${availableVoices.length}`);
+  
+      // If Google is currently selected, refresh voice list now
+      if (selectedTTSEngine === "google") {
+        loadGoogleVoices();
+      }
+    };
+  }
+  
+  
+
+  if (ttsEngineSelect) {
+    ttsEngineSelect.addEventListener('change', async () => {
+      selectedTTSEngine = ttsEngineSelect.value;
+      console.log(`🎙️ TTS Engine selected: ${selectedTTSEngine}`);
+
+      // Refresh voice options
+      if (selectedTTSEngine === "google") {
+        await loadGoogleVoices();
+      } else if (selectedTTSEngine.startsWith("openai")) {
+        loadOpenAIVoices();
+      } else {
+        ttsVoiceSelect.innerHTML = "<option value=''>No Voice Selected</option>";
+        ttsVoiceSelect.disabled = true;
+      }
+    });
+  }
+
+  if (ttsVoiceSelect) {
+    ttsVoiceSelect.addEventListener('change', () => {
+      selectedTTSVoice = ttsVoiceSelect.value;
+      console.log(`🎙️ TTS Voice selected: ${selectedTTSVoice}`);
+    });
+  }
 
   // 🛠 Moved loadThreads to only happen after auth ready
 });
@@ -68,6 +120,35 @@ onAuthStateChanged(auth, (user) => {
     loadThreads(DEFAULT_USER_ID);
   }
 });
+
+async function loadGoogleVoices() {
+  const filteredVoices = availableVoices; // 🚨 REMOVE FILTERING FOR NOW
+
+  ttsVoiceSelect.innerHTML = "";
+  filteredVoices.forEach(voice => {
+    const opt = document.createElement("option");
+    opt.value = voice.name;
+    opt.textContent = `${voice.name} (${voice.lang})`;
+    ttsVoiceSelect.appendChild(opt);
+  });
+
+  ttsVoiceSelect.disabled = filteredVoices.length === 0;
+}
+
+
+
+function loadOpenAIVoices() {
+  const openaiVoices = ["alloy", "echo", "fable", "onyx", "nova", "shimmer"];
+  ttsVoiceSelect.innerHTML = "";
+  openaiVoices.forEach(name => {
+    const opt = document.createElement("option");
+    opt.value = name;
+    opt.textContent = name;
+    ttsVoiceSelect.appendChild(opt);
+  });
+  ttsVoiceSelect.disabled = false;
+}
+
 
 
 async function loadThreads(userId) {
@@ -343,6 +424,10 @@ async function send() {
 
     convo.scrollTo({ top: convo.scrollHeight, behavior: 'smooth' });
 
+    
+    speak(data.reply); // 🗣️ Make her talk!
+
+    
   } catch (err) {
     clearInterval(thinkingInterval); // 🛑 Stop animation even on error
     loadingDiv.innerHTML = `<p style="color:red;"><b>Error:</b> ${err.message}</p>`;
@@ -350,4 +435,38 @@ async function send() {
 
   btn.disabled = false;
 }
+
+function speak(text) {
+  if (selectedTTSEngine === "none") return;
+
+  if (selectedTTSEngine === "google") {
+    const synth = window.speechSynthesis;
+    synth.cancel(); // 🛑 Always cancel existing speech before speaking new
+
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    const selectedVoice = availableVoices.find(v => v.name === selectedTTSVoice);
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+      utterance.lang = selectedVoice.lang || 'en-US'; // Prefer voice language
+    } else {
+      console.warn("⚠️ No matching voice found, using default.");
+    }
+
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+
+    // 🛠 Small delay to ensure voices are set properly
+    setTimeout(() => {
+      synth.speak(utterance);
+    }, 100);
+  }
+  else if (selectedTTSEngine.startsWith("openai")) {
+    console.log(`🧪 Would call OpenAI TTS API for: ${selectedTTSVoice} - ${text}`);
+    // 🔥 Future OpenAI API integration point
+  }
+}
+
+
 

@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// 🧠 PiP Playground – v1.3.0-dev
+// 🧠 PiP Playground – v1.3.3-dev
 // ─────────────────────────────────────────────────────────────
 // 🚀 Assistant ID API + Firestore Integration
 // 🧵 Dynamic Thread Creation + System Prompt Injection

@@ -1,4 +1,4 @@
-# 🎯 PiP Playground – v1.3.0
+# 🎯 PiP Playground – v1.3.3
 
 Welcome to the **Ver-1.3 Climax Release**  
 A project soaked in passion, precision, and raw technical mastery.
